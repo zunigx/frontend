@@ -3,10 +3,24 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  background: linear-gradient(135deg, #47484b 0%, #7a8088 100%); /* Gradiente azul */
+  background: linear-gradient(135deg, #1e1e1e 0%, #2c2c2c 100%);
   color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
   transition: all 0.3s ease;
+}
+
+.header-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #0288D1, #d32f2f);
+  opacity: 0.8;
 }
 
 .header-left {
@@ -16,52 +30,91 @@
 
 .header-title {
   font-size: 1.8rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin: 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #ffffff, #d1d1d1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: transform 0.3s ease;
+}
+
+.header-title:hover {
+  transform: translateY(-2px);
 }
 
 .header-right {
   display: flex;
-  gap: 1rem; /* Más espacio entre botones */
+  gap: 1rem;
 }
 
 .p-button {
   padding: 0.75rem 1.5rem;
-  border-radius: 50px; /* Bordes más redondeados */
+  min-width: 120px;
+  border-radius: 50px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.p-button-info {
-  background-color: #10b981; /* Verde esmeralda */
+.p-button-secondary {
+  background: #0213d1;
   border: none;
   color: #ffffff;
 }
 
-.p-button-info:hover {
-  background-color: #059669; /* Verde más oscuro */
-  transform: translateY(-2px); /* Efecto de elevación */
+.p-button-secondary:hover {
+  background: #01579B;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 136, 209, 0.4);
 }
 
 .p-button-danger {
-  background-color: #ef4444; /* Rojo vibrante */
+  background: #d32f2f;
   border: none;
   color: #ffffff;
 }
 
 .p-button-danger:hover {
-  background-color: #dc2626; /* Rojo más oscuro */
-  transform: translateY(-2px); /* Efecto de elevación */
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 
-.p-button .pi {
-  margin-right: 0.5rem; /* Espacio entre ícono y texto */
+.button-label {
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-/* Efecto ripple más sutil */
-.p-ripple .p-ink {
-  background: rgba(255, 255, 255, 0.3);
+.p-button-tasks {
+  background: #4caf50; /* Green for tasks */
+  border: none;
+  color: #ffffff;
+}
+
+.p-button-tasks:hover {
+  background: #388e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-right {
+    justify-content: center;
+  }
+
+  .p-button {
+    min-width: 100px;
+    padding: 0.5rem 1rem;
+  }
 }

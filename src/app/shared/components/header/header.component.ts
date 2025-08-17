@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { AuthService } from '../../../core/auth/auth.service';
-import { Router } from '@angular/router'; // Importa Router
+import { AuthService } from '../../../core/auth/auth.service'; // Adjust path as needed
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-header',
@@ -22,7 +22,12 @@ export class HeaderComponent {
   }
 
   goToDashLogs(): void {
-    this.router.navigate(['/logs/dash-logs']); // Navega a la ruta /logs
+    this.router.navigate(['/logs/dash-logs']);
     console.log('Navegando a DashLogs');
+  }
+
+  goToTasks(): void {
+    this.router.navigate(['/tasks/task-list']);
+    console.log('Navegando a Tasks');
   }
 }

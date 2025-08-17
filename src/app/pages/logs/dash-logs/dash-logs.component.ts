@@ -1,283 +1,200 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
+import { Component, OnInit } from '@angular/core';
+import { BaseChartDirective } from 'ng2-charts';
+import { Chart, ChartConfiguration, ChartData, ChartType, registerables } from 'chart.js';
 import { LogService } from '../../../core/logs/log.service';
-import Chart from 'chart.js/auto';
-import { isPlatformBrowser } from '@angular/common';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { Router } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { CardModule } from 'primeng/card'; // Importar CardModule
+import { IconFieldModule } from 'primeng/iconfield'; // Importar IconFieldModule para íconos
+
+Chart.register(...registerables);
+
+interface Log {
+  route: string;
+  service: string;
+  method: string;
+  status: number;
+  response_time: number;
+  timestamp: string;
+  user: string;
+  _id: string;
+}
 
 @Component({
   selector: 'app-dash-logs',
   standalone: true,
-  imports: [ChartModule, HeaderComponent, DecimalPipe],
+  imports: [
+    BaseChartDirective,
+    CommonModule,
+    HeaderComponent,
+    CardModule, // Agregar CardModule
+    IconFieldModule // Agregar IconFieldModule
+  ],
   templateUrl: './dash-logs.component.html',
-  styleUrl: './dash-logs.component.css'
+  styleUrls: ['./dash-logs.component.css']
 })
-export class DashLogsComponent implements OnInit, AfterViewInit, OnDestroy {
-  logData: any[] = []; // Cambiado a any[] para manejar objetos JSON
+export class DashLogsComponent implements OnInit {
+  logs: Log[] = [];
+  totalLogs = 0;
+  uniqueRoutes = 0;
+  uniqueUsers = 0;
+  avgResponseTime = '0.00';
+  minResponseTime = '0.00';
+  mostConsumedAPI = { route: '', count: 0 };
+  leastConsumedAPI = { route: '', count: Infinity };
   statusCounts: { [key: string]: number } = {};
-  totalLogs: number = 0;
-  avgResponseTime: number = 0;
-  minResponseTime: number = 0;
-  maxResponseTime: number = 0;
-  apiUsage: { [key: string]: number } = {};
-  logsByService: { [key: string]: number } = {};
+  routeCounts: { [key: string]: number } = {};
+  methodCounts: { [key: string]: number } = {};
+  rateLimitMessage: string | null = null;
 
-  @ViewChild('statusChart') statusChartRef!: ElementRef;
-  @ViewChild('apiChart') apiChartRef!: ElementRef;
-  @ViewChild('responseTimeChart') responseTimeChartRef!: ElementRef;
-  @ViewChild('totalLogsChart') totalLogsChartRef!: ElementRef;
-  private statusChart!: Chart;
-  private apiChart!: Chart;
-  private responseTimeChart!: Chart;
-  private totalLogsChart!: Chart;
-  private refreshInterval: any;
+  public sessionsChartType: ChartType = 'bar';
+  public sessionsChartData: ChartData<'bar'> = { datasets: [] };
+  public sessionsChartLabels: string[] = [];
+  public sessionsChartOptions: ChartConfiguration['options'] = {
+    scales: { y: { beginAtZero: true } }
+  };
 
-  // Historial de totalLogs con timestamps
-  logHistory: { timestamp: string, total: number }[] = [];
+  public methodChartType: ChartType = 'bar';
+  public methodChartData: ChartData<'bar'> = { datasets: [] };
+  public methodChartLabels: string[] = [];
+  public methodChartOptions: ChartConfiguration['options'] = {
+    indexAxis: 'y',
+    scales: { x: { beginAtZero: true } }
+  };
 
-  constructor(
-    private logService: LogService,
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router
-  ) {}
+  public statusChartType: ChartType = 'bar';
+  public statusChartData: ChartData<'bar'> = { datasets: [] };
+  public statusChartLabels: string[] = ['200', '401', '404', '500'];
+  public statusChartOptions: ChartConfiguration['options'] = {
+    scales: { y: { beginAtZero: true } }
+  };
+
+  public rtChartType: ChartType = 'line';
+  public rtChartData: ChartData<'line'> = { datasets: [] };
+  public rtChartLabels: string[] = [];
+  public rtChartOptions: ChartConfiguration['options'] = {
+    elements: { line: { fill: true } },
+    scales: { y: { beginAtZero: true } }
+  };
+
+  constructor(private logService: LogService) {}
 
   ngOnInit(): void {
-    this.fetchLogs();
-    this.refreshInterval = setInterval(() => {
-      this.fetchLogs();
-    }, 60000); // Refresca cada minuto
-  }
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.initializeCharts();
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
-    if (this.statusChart) this.statusChart.destroy();
-    if (this.apiChart) this.apiChart.destroy();
-    if (this.responseTimeChart) this.responseTimeChart.destroy();
-    if (this.totalLogsChart) this.totalLogsChart.destroy();
-  }
-
-  private fetchLogs(): void {
     this.logService.getLogs().subscribe({
-      next: (data: any) => {
-        this.logData = data.logs || [];
-        this.processLogs();
-      },
-      error: (err) => {
-        console.error('Error fetching logs:', err);
-        this.logData = [];
-        this.processLogs();
-      }
-    });
-  }
-
-  processLogs(): void {
-    this.totalLogs = this.logData.length;
-    let totalResponseTime = 0;
-    let responseTimes: number[] = [];
-    this.statusCounts = {};
-    this.apiUsage = {};
-    this.logsByService = {};
-    this.minResponseTime = Infinity;
-    this.maxResponseTime = -Infinity;
-    this.avgResponseTime = 0;
-
-    this.logData.forEach((log: any) => {
-      // Extraer datos directamente de los objetos JSON
-      const status = log.status.toString();
-      const responseTime = parseFloat(log.response_time) || 0;
-      const route = log.route;
-      const service = log.service;
-
-      // Contar códigos de estado
-      this.statusCounts[status] = (this.statusCounts[status] || 0) + 1;
-
-      // Acumular tiempos de respuesta
-      totalResponseTime += responseTime;
-      responseTimes.push(responseTime);
-      this.minResponseTime = Math.min(this.minResponseTime, responseTime);
-      this.maxResponseTime = Math.max(this.maxResponseTime, responseTime);
-
-      // Contar uso de API
-      const apiKey = `${service}:${route}`;
-      this.apiUsage[apiKey] = (this.apiUsage[apiKey] || 0) + 1;
-
-      // Contar logs por servicio
-      this.logsByService[service] = (this.logsByService[service] || 0) + 1;
-    });
-
-    // Añadir al historial con timestamp
-    const now = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-    this.logHistory.push({ timestamp: now, total: this.totalLogs });
-
-    // Limitar el historial a los últimos 10 puntos
-    if (this.logHistory.length > 10) {
-      this.logHistory.shift();
-    }
-
-    this.avgResponseTime = responseTimes.length ? totalResponseTime / responseTimes.length : 0;
-    if (responseTimes.length === 0) {
-      this.minResponseTime = 0;
-      this.maxResponseTime = 0;
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      if (this.statusChart) {
-        this.statusChart.data.labels = Object.keys(this.statusCounts);
-        this.statusChart.data.datasets[0].data = Object.values(this.statusCounts);
-        this.statusChart.update();
-      }
-      if (this.apiChart) {
-        this.apiChart.data.labels = Object.keys(this.apiUsage);
-        this.apiChart.data.datasets[0].data = Object.values(this.apiUsage);
-        this.apiChart.update();
-      }
-      if (this.responseTimeChart) {
-        this.responseTimeChart.data.datasets[0].data = [this.avgResponseTime, this.minResponseTime, this.maxResponseTime];
-        this.responseTimeChart.update();
-      }
-      if (this.totalLogsChart) {
-        this.totalLogsChart.data.labels = this.logHistory.map(entry => entry.timestamp);
-        this.totalLogsChart.data.datasets[0].data = this.logHistory.map(entry => entry.total);
-        this.totalLogsChart.update();
-      }
-    }
-  }
-
-  initializeCharts(): void {
-    const statusCtx = this.statusChartRef.nativeElement.getContext('2d');
-    this.statusChart = new Chart(statusCtx, {
-      type: 'pie',
-      data: {
-        labels: Object.keys(this.statusCounts),
-        datasets: [{
-          data: Object.values(this.statusCounts),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Distribución de Códigos de Estado' }
+      next: (response) => {
+        if (response.statusCode === 200) {
+          this.logs = response.intData.data;
+          this.computeStats();
+          this.prepareCharts();
+          this.rateLimitMessage = null;
         }
-      }
-    });
-
-    const apiCtx = this.apiChartRef.nativeElement.getContext('2d');
-    this.apiChart = new Chart(apiCtx, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(this.apiUsage),
-        datasets: [{
-          label: 'Llamadas a la API',
-          data: Object.values(this.apiUsage),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-          borderColor: ['#E5556C', '#1E88E5', '#E6B800', '#3AA8A8', '#7B1FA2'],
-          borderWidth: 1
-        }]
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Uso de la API' }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Número de Llamadas' }
-          },
-          x: {
-            title: { display: true, text: 'Rutas de la API' },
-            ticks: {
-              autoSkip: true,
-              maxRotation: 45,
-              minRotation: 45,
-              maxTicksLimit: 10
-            }
-          }
-        }
-      }
-    });
-
-    const responseTimeCtx = this.responseTimeChartRef.nativeElement.getContext('2d');
-    this.responseTimeChart = new Chart(responseTimeCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Promedio', 'Mínimo', 'Máximo'],
-        datasets: [{
-          label: 'Tiempo de Respuesta (segundos)',
-          data: [this.avgResponseTime, this.minResponseTime, this.maxResponseTime],
-          backgroundColor: ['#4BC0C0', '#FFCE56', '#FF6384'],
-          borderColor: ['#3AA8A8', '#E6B800', '#E5556C'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Estadísticas de Tiempo de Respuesta' }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Tiempo (segundos)' },
-            suggestedMax: this.maxResponseTime > 0 ? this.maxResponseTime * 1.2 : 1
-          },
-          x: {
-            title: { display: true, text: 'Métricas' }
-          }
-        }
-      }
-    });
-
-    const totalLogsCtx = this.totalLogsChartRef.nativeElement.getContext('2d');
-    this.totalLogsChart = new Chart(totalLogsCtx, {
-      type: 'line',
-      data: {
-        labels: this.logHistory.map(entry => entry.timestamp),
-        datasets: [{
-          label: 'Total de Logs',
-          data: this.logHistory.map(entry => entry.total),
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: '#36A2EB',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Evolución del Total de Logs' }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Número de Logs' },
-            suggestedMax: 100
-          },
-          x: {
-            title: { display: true, text: 'Hora' }
-          }
+      error: (error) => {
+        if (error.status === 429) {
+          this.rateLimitMessage = error.error.message || 'Has alcanzado el límite de peticiones. Por favor, intenta de nuevo más tarde.';
+        } else {
+          this.rateLimitMessage = 'Ocurrió un error al cargar los registros. Por favor, intenta de nuevo.';
         }
       }
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/tasks/task-list']);
+  private computeStats() {
+    this.totalLogs = this.logs.length;
+    const routes = new Set<string>();
+    const users = new Set<string>();
+    let sumRT = 0;
+    let minRT = Infinity;
+    this.statusCounts = { '200': 0, '401': 0, '404': 0, '500': 0 };
+    this.routeCounts = {};
+    this.methodCounts = {};
+
+    for (const log of this.logs) {
+      if (log.route === '/favicon.ico') continue;
+      routes.add(log.route);
+      users.add(log.user);
+      sumRT += log.response_time;
+      if (log.response_time < minRT) minRT = log.response_time;
+      const statusStr = log.status.toString();
+      if (['200', '401', '404', '500'].includes(statusStr)) {
+        this.statusCounts[statusStr] = (this.statusCounts[statusStr] || 0) + 1;
+      }
+      this.routeCounts[log.route] = (this.routeCounts[log.route] || 0) + 1;
+      this.methodCounts[log.method] = (this.methodCounts[log.method] || 0) + 1;
+    }
+
+    this.uniqueRoutes = routes.size;
+    this.uniqueUsers = users.size;
+    this.avgResponseTime = this.totalLogs > 0 ? (sumRT / this.totalLogs).toFixed(4) : '0.0000';
+    this.minResponseTime = isFinite(minRT) ? minRT.toFixed(4) : '0.0000';
+
+    let maxCount = 0;
+    let minCount = Infinity;
+    for (const [route, count] of Object.entries(this.routeCounts)) {
+      if (count > maxCount) {
+        this.mostConsumedAPI = { route, count };
+        maxCount = count;
+      }
+      if (count < minCount && count > 0) {
+        this.leastConsumedAPI = { route, count };
+        minCount = count;
+      }
+    }
+  }
+
+  private prepareCharts() {
+    const dayCounts: { [day: string]: number } = {};
+    for (const log of this.logs) {
+      const day = log.timestamp.split(' ')[0];
+      dayCounts[day] = (dayCounts[day] || 0) + 1;
+    }
+    this.sessionsChartLabels = Object.keys(dayCounts).sort();
+    this.sessionsChartData = {
+      datasets: [{
+        data: this.sessionsChartLabels.map(d => dayCounts[d]),
+        label: 'Registros por Día',
+        backgroundColor: 'yellow'
+      }]
+    };
+
+    this.methodChartLabels = Object.keys(this.methodCounts);
+    this.methodChartData = {
+      datasets: [{
+        data: Object.values(this.methodCounts),
+        label: 'Métodos',
+        backgroundColor: 'cyan'
+      }]
+    };
+
+    this.statusChartData = {
+      datasets: [{
+        data: this.statusChartLabels.map(status => this.statusCounts[status] || 0),
+        label: 'Códigos de Estado',
+        backgroundColor: 'blue'
+      }]
+    };
+
+    const dayRT: { [day: string]: { sum: number, count: number } } = {};
+    for (const log of this.logs) {
+      const day = log.timestamp.split(' ')[0];
+      if (!dayRT[day]) dayRT[day] = { sum: 0, count: 0 };
+      dayRT[day].sum += log.response_time;
+      dayRT[day].count++;
+    }
+    const sortedDays = Object.keys(dayRT).sort();
+    this.rtChartLabels = sortedDays;
+    this.rtChartData = {
+      datasets: [{
+        data: sortedDays.map(d => dayRT[d].sum / dayRT[d].count),
+        label: 'Tiempo de Respuesta Promedio por Día',
+        borderColor: 'yellow',
+        backgroundColor: 'rgba(255, 255, 0, 0.3)',
+        fill: true
+      }]
+    };
+  }
+
+  clearRateLimitMessage() {
+    this.rateLimitMessage = null;
   }
 }

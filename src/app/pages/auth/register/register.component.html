@@ -1,6 +1,6 @@
 <div class="login-container">
   <p-toast position="top-right"></p-toast>
-  <p-card [style]="cardStyles">
+  <p-card [style]="{'border-radius': '12px', 'box-shadow': '0 8px 24px rgba(0, 0, 0, 0.15)', 'background': 'linear-gradient(145deg, #ffffff, #f8fafc)'}">
     <ng-template #header>
       <div class="header-circle-container">
         <div class="user-icon-circle">
@@ -16,26 +16,26 @@
     <div class="form-fields" *ngIf="!qrCode">
       <div class="label">Nombre de usuario</div>
       <p-inputgroup>
-        <p-inputgroup-addon>
+        <p-inputgroup-addon [style]="{'background': '#f1f5f9', 'border-radius': '8px 0 0 8px'}">
           <i class="pi pi-user"></i>
         </p-inputgroup-addon>
-        <input pInputText [(ngModel)]="username" placeholder="Nombre de usuario" />
+        <input pInputText [(ngModel)]="username" placeholder="Nombre de usuario" [style]="{'width': '100%'}" />
       </p-inputgroup>
 
       <div class="label">Contraseña</div>
       <p-inputgroup>
-        <p-inputgroup-addon>
+        <p-inputgroup-addon [style]="{'background': '#f1f5f9', 'border-radius': '8px 0 0 8px'}">
           <i class="pi pi-lock"></i>
         </p-inputgroup-addon>
-        <input pInputText type="password" [(ngModel)]="password" placeholder="Contraseña" />
+        <input pInputText type="password" [(ngModel)]="password" placeholder="Contraseña" [style]="{'width': '100%'}" />
       </p-inputgroup>
 
       <div class="label">Confirmar Contraseña</div>
       <p-inputgroup>
-        <p-inputgroup-addon>
+        <p-inputgroup-addon [style]="{'background': '#f1f5f9', 'border-radius': '8px 0 0 8px'}">
           <i class="pi pi-lock"></i>
         </p-inputgroup-addon>
-        <input pInputText type="password" [(ngModel)]="confirmPassword" placeholder="Confirmar Contraseña" />
+        <input pInputText type="password" [(ngModel)]="confirmPassword" placeholder="Confirmar Contraseña" [style]="{'width': '100%'}" />
       </p-inputgroup>
     </div>
 
@@ -51,7 +51,7 @@
           label="Iniciar Sesión"
           severity="secondary"
           [outlined]="true"
-          [ngClass]="'w-full p-button-outlined'"
+          [style]="{'width': '45%'}"
           routerLink="/auth/login"
         ></p-button>
         <p-button
@@ -59,13 +59,13 @@
           (click)="register()"
           label="Registrarse"
           severity="info"
-          [ngClass]="'w-full'"
+          [style]="{'width': '45%'}"
         ></p-button>
         <p-button
           *ngIf="qrCode"
           label="Continuar"
           severity="info"
-          [ngClass]="'w-full'"
+          [style]="{'width': '45%'}"
           routerLink="/auth/login"
         ></p-button>
       </div>
