@@ -1,77 +1,122 @@
-/* dashlogs.component.css */
 h1 {
   text-align: center;
-  font-size: 2.5rem;
-  margin: 1rem 0;
-  color: #fff;
+  font-size: 2.8rem;
+  margin: 1.5rem 0;
+  color: #e9d5ff; /* Púrpura claro */
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(147, 51, 234, 0.5); /* Sombra neón */
 }
 
 .dashboard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 20px;
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 10px;
-  color: white;
+  grid-gap: 24px;
+  background: linear-gradient(45deg, #1e1b4b, #3b0764); /* Gradiente púrpura-azul oscuro */
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent); /* Patrón de líneas diagonales */
+  background-size: 20px 20px;
+  padding: 24px;
+  border-radius: 8px;
+  color: #e9d5ff;
+  min-height: 50vh;
 }
 
 .panel {
-  background-color: #2e2e2e;
-  padding: 15px;
-  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro semitransparente */
+  padding: 20px;
+  border-radius: 8px; /* Bordes angulares */
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.6), inset 0 0 10px rgba(147, 51, 234, 0.3); /* Efecto neón externo e interno */
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.panel:hover {
+  transform: translateY(-6px) scale(1.02); /* Efecto 3D al hover */
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.8), inset 0 0 15px rgba(147, 51, 234, 0.4);
 }
 
 .big-number {
-  font-size: 42px;
-  font-weight: bold;
-  margin: 10px 0;
+  font-size: 48px;
+  font-weight: 700;
+  margin: 12px 0;
+  color: #a78bfa; /* Púrpura suave */
+  text-shadow: 0 0 8px rgba(147, 51, 234, 0.5);
 }
 
 h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 18px;
+  margin-bottom: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  color: #e9d5ff; /* Púrpura claro */
 }
 
 canvas {
   width: 100% !important;
-  height: 200px !important;
+  height: 220px !important;
   margin: 0 auto;
+  border: 1px solid #9333ea; /* Borde neón */
+  border-radius: 4px;
+  background: #1f2937; /* Fondo oscuro */
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
 }
 
 .additional-stats {
-  margin-top: 20px;
-  background-color: #2e2e2e;
-  padding: 20px;
+  margin-top: 24px;
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro semitransparente */
+  padding: 24px;
   border-radius: 8px;
-  color: white;
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.5); /* Borde neón */
+  color: #e9d5ff;
+  transition: box-shadow 0.3s ease;
+}
+
+.additional-stats:hover {
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.7);
 }
 
 .additional-stats h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
+  font-size: 20px;
+  margin-bottom: 18px;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-gap: 20px;
 }
 
 .stat-card {
-  background-color: #3a3a3a;
+  background: rgba(31, 41, 55, 0.95); /* Fondo oscuro */
   border-radius: 8px;
-  padding: 15px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5); /* Borde neón */
   text-align: center;
-  transition: transform 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.7);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+.stat-card:hover::before {
+  left: 100%; /* Efecto de brillo "glitch" */
 }
 
 .stat-content {
@@ -81,21 +126,30 @@ canvas {
 }
 
 .stat-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #4CAF50; /* Verde para destacar, ajusta según tu tema */
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  background: linear-gradient(45deg, #9333ea, #4f46e5); /* Gradiente púrpura-azul */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px rgba(147, 51, 234, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(147, 51, 234, 0.8); }
+  100% { text-shadow: 0 0 10px rgba(147, 51, 234, 0.5); }
 }
 
 .stat-content h4 {
-  font-size: 16px;
-  margin: 5px 0;
-  color: #fff;
+  font-size: 18px;
+  margin: 6px 0;
+  color: #e9d5ff;
 }
 
 .stat-value {
-  font-size: 16px;
-  font-weight: bold;
-  color: #e0e0e0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #d8b4fe; /* Púrpura más claro */
 }
 
 .status-list {
@@ -106,36 +160,47 @@ canvas {
 }
 
 .status-list li {
-  margin: 8px 0;
-  font-size: 14px;
+  margin: 10px 0;
+  font-size: 15px;
 }
 
 .status-success {
-  color: #4CAF50; /* Verde para código 200 */
+  color: #06b6d4; /* Cian para código 200 */
 }
 
 .status-error {
-  color: #EF5350; /* Rojo para códigos de error */
+  color: #ef4444; /* Rojo neón para códigos de error */
 }
 
 .alert.alert-warning {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
-  padding: 1rem;
-  margin: 1rem 0;
-  border-radius: 0.25rem;
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro */
+  border: 1px solid #9333ea; /* Borde neón */
+  color: #e9d5ff; /* Texto púrpura claro */
+  padding: 1.2rem;
+  margin: 1.2rem 0;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: 18px;
+  color: #e9d5ff;
   cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #a78bfa; /* Púrpura más claro */
+}
+
+/* Estilo para las tarjetas de PrimeNG */
+:host ::ng-deep .p-card {
+  background: transparent !important; /* Fondo transparente para usar el fondo de stat-card */
+  box-shadow: none !important; /* Sin sombra adicional */
 }

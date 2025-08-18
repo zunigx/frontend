@@ -3,99 +3,182 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(145deg, #2c3e50, #3498db); /* Gradiente moderno con tonos azules */
+  background: linear-gradient(45deg, #1e1b4b, #3b0764); /* Gradiente púrpura-azul oscuro */
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 10px 10px; /* Patrón sutil de puntos */
+  padding: 1rem;
   overflow: hidden;
   position: relative;
+}
+
+.p-card {
+  max-width: 450px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.5); /* Borde con efecto neón */
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro semitransparente */
+  transition: box-shadow 0.3s ease;
+}
+
+.p-card:hover {
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.7); /* Neón más intenso al hover */
 }
 
 .header-circle-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem 0;
+  padding: 2rem 0;
 }
 
 .user-icon-circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ffffff, #e8ecef); /* Fondo más suave y moderno */
+  width: 80px;
+  height: 80px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Forma hexagonal */
+  background: linear-gradient(45deg, #9333ea, #4f46e5); /* Gradiente púrpura-azul */
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.6);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 15px rgba(147, 51, 234, 0.6); }
+  50% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.9); }
+  100% { box-shadow: 0 0 15px rgba(147, 51, 234, 0.6); }
 }
 
 .user-icon {
-  font-size: 2.5rem;
-  color: #2c3e50; /* Color más oscuro para contraste */
+  font-size: 2.8rem;
+  color: #ffffff;
 }
 
 .login-title {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
+  color: #e9d5ff; /* Púrpura claro para contraste */
+  margin-bottom: 1.8rem;
   text-align: center;
-  letter-spacing: 0.5px; /* Espaciado para un toque elegante */
+  letter-spacing: 1px;
 }
 
 .form-fields {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.6rem;
+  padding: 0 2rem;
 }
 
 .label {
-  font-size: 0.875rem; /* text-sm en Tailwind */
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 0.25rem; /* mb-1 en Tailwind */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e9d5ff; /* Púrpura claro */
+  margin-bottom: 0.5rem;
   text-align: left;
+  letter-spacing: 0.5px;
 }
 
 .login-buttons {
   display: flex;
   gap: 1.5rem;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
   justify-content: center;
+  padding: 2rem;
 }
 
 /* Estilos para los inputs */
+:host ::ng-deep .p-inputgroup {
+  border-radius: 4px; /* Bordes angulares */
+  border: 1px solid #9333ea; /* Borde púrpura */
+  transition: border-color 0.3s ease;
+}
+
+:host ::ng-deep .p-inputgroup:hover {
+  border-color: #a78bfa; /* Púrpura más claro al hover */
+}
+
+:host ::ng-deep .p-inputgroup-addon {
+  background-color: #1e1b4b; /* Fondo azul oscuro */
+  color: #e9d5ff;
+  border: none;
+  border-radius: 4px 0 0 4px;
+}
+
 :host ::ng-deep .p-inputtext {
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding: 0.75rem;
-  transition: all 0.3s ease;
+  border: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  background-color: #1f2937; /* Fondo oscuro */
+  color: #e9d5ff; /* Texto claro */
+  width: 100%;
+  transition: box-shadow 0.3s ease;
 }
 
 :host ::ng-deep .p-inputtext:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  outline: none;
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.5); /* Brillo púrpura al enfocar */
 }
 
 /* Estilos para los botones */
 :host ::ng-deep .p-button {
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  border-radius: 4px; /* Bordes angulares */
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+:host ::ng-deep .p-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+:host ::ng-deep .p-button:hover::before {
+  left: 100%; /* Efecto de brillo "glitch" al pasar el mouse */
 }
 
 :host ::ng-deep .p-button-outlined {
-  border: 2px solid #3498db;
-  color: #3498db;
+  border: 2px solid #9333ea; /* Borde púrpura */
+  background-color: transparent;
+  color: #e9d5ff;
 }
 
 :host ::ng-deep .p-button-outlined:hover {
-  background-color: #3498db;
+  background-color: #9333ea; /* Fondo púrpura al hover */
   color: #ffffff;
+  transform: translateY(-2px);
 }
 
 :host ::ng-deep .p-button:not(.p-button-outlined) {
-  background-color: #2c3e50;
+  background-color: #06b6d4; /* Cian */
 }
 
 :host ::ng-deep .p-button:not(.p-button-outlined):hover {
-  background-color: #1a252f;
+  background-color: #0e7490; /* Cian más oscuro */
+  transform: translateY(-2px);
+}
+
+/* Estilo para el código QR */
+:host ::ng-deep img[alt="Código QR para MFA"] {
+  border: 2px solid #9333ea; /* Borde púrpura neón */
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+}
+
+/* Estilo para el toast */
+:host ::ng-deep .p-toast .p-toast-message {
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+  background: rgba(17, 24, 39, 0.9);
+  color: #e9d5ff;
+  border: 1px solid #9333ea;
 }

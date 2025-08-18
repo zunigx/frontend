@@ -1,69 +1,108 @@
 .task-create-container {
-  padding: 20px;
-  background: linear-gradient(135deg, #2e2e2e 0%, #1a1a1a 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  max-width: 600px;
-  margin: 20px auto;
-  color: #fff;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro semitransparente */
+  border-radius: 8px; /* Bordes angulares */
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.5); /* Borde neón */
+  max-width: 650px;
+  margin: 24px auto;
+  color: #e9d5ff; /* Texto púrpura claro */
+  transition: box-shadow 0.3s ease;
+}
+
+.task-create-container:hover {
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.7); /* Neón más intenso al hover */
 }
 
 .task-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .form-group label {
-  font-size: 1em;
+  font-size: 1.1em;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #e9d5ff; /* Púrpura claro */
+  letter-spacing: 0.5px;
 }
 
 .p-inputgroup {
   width: 100%;
+  border-radius: 4px; /* Bordes angulares */
+  border: 1px solid #9333ea; /* Borde púrpura */
+  transition: border-color 0.3s ease;
+}
+
+.p-inputgroup:hover {
+  border-color: #a78bfa; /* Púrpura más claro al hover */
+}
+
+.p-inputgroup-addon {
+  background: #1e1b4b; /* Fondo azul oscuro */
+  border: none;
+  border-radius: 4px 0 0 4px;
+  color: #e9d5ff;
 }
 
 .p-inputtext,
-.p-calendar,
+.p-calendar .p-inputtext,
 .p-dropdown {
   width: 100%;
-  border-radius: 8px;
-  background: #333;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 0 4px 4px 0;
+  background: #1f2937; /* Fondo oscuro */
+  color: #e9d5ff; /* Texto claro */
+  padding: 0.9rem;
+  font-size: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.p-inputtext:focus,
+.p-calendar .p-inputtext:focus,
+.p-dropdown:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.5); /* Brillo púrpura al enfocar */
 }
 
 .p-inputtext.ng-invalid.ng-touched,
 .p-calendar.ng-invalid.ng-touched .p-inputtext,
 .p-dropdown.ng-invalid.ng-touched {
-  border-color: #d32f2f;
+  border: 1px solid #ef4444; /* Borde rojo neón */
   background: #3c2f2f;
-}
-
-.p-inputgroup-addon {
-  background: #444;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: none;
-  border-radius: 8px 0 0 8px;
-  color: #fff;
 }
 
 .p-inputgroup .p-inputtext {
   border-left: none;
-  border-radius: 0 8px 8px 0;
+}
+
+.p-calendar .p-datepicker,
+.p-dropdown .p-dropdown-panel {
+  background: #1f2937; /* Fondo oscuro para el calendario y dropdown */
+  color: #e9d5ff;
+  border: 1px solid #9333ea;
+  border-radius: 4px;
+}
+
+.p-calendar .p-datepicker .p-day,
+.p-dropdown .p-dropdown-item {
+  color: #e9d5ff;
+}
+
+.p-calendar .p-datepicker .p-day:hover,
+.p-dropdown .p-dropdown-item:hover {
+  background: #9333ea; /* Púrpura al hover */
 }
 
 .error-message {
-  color: #d32f2f;
-  font-size: 0.8em;
-  margin-top: 4px;
+  color: #ef4444; /* Rojo neón */
+  font-size: 0.85em;
+  margin-top: 6px;
   display: none;
 }
 
@@ -73,25 +112,67 @@
 
 .form-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
+  margin-top: 20px;
 }
 
 .p-button {
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-radius: 4px; /* Bordes angulares */
+  padding: 0.9rem 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.p-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+.p-button:hover::before {
+  left: 100%; /* Efecto de brillo "glitch" */
+}
+
+.p-button:not(.p-button-secondary) {
+  background: #9333ea; /* Púrpura para "Crear Tarea" */
+  border: none;
+}
+
+.p-button:not(.p-button-secondary):hover {
+  background: #a78bfa; /* Púrpura más claro */
+  transform: translateY(-2px);
 }
 
 .p-button.p-button-secondary {
-  background: #616161;
+  background: #06b6d4; /* Cian para "Cancelar" */
   border: none;
 }
 
 .p-button.p-button-secondary:hover {
-  background: #757575;
+  background: #0e7490; /* Cian más oscuro */
+  transform: translateY(-2px);
 }
 
 .p-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Estilo para el toast */
+:host ::ng-deep .p-toast .p-toast-message {
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+  background: rgba(17, 24, 39, 0.9);
+  color: #e9d5ff;
+  border: 1px solid #9333ea;
 }

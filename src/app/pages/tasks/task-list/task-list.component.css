@@ -1,24 +1,32 @@
 .kanban-board {
   display: flex;
-  gap: 15px;
-  padding: 15px;
-  background-color: #676262fe; /* Fondo oscuro general */
-  color: #fff; /* Texto blanco */
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(45deg, #1e1b4b, #3b0764); /* Gradiente púrpura-azul oscuro */
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 10px 10px; /* Patrón sutil de puntos */
+  color: #e9d5ff; /* Texto púrpura claro */
   margin-top: 0;
+  min-height: 100vh;
 }
 
 .kanban-column {
   flex: 1;
-  min-width: 280px;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
-  background-color: #272727; /* Fondo de las columnas */
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 10px rgba(174, 174, 174, 0.3);
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro semitransparente */
+  border-radius: 8px; /* Bordes angulares */
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5); /* Borde neón */
   max-height: 100%;
   overflow-y: auto;
   scrollbar-width: thin;
+  transition: box-shadow 0.3s ease;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.7); /* Neón más intenso al hover */
 }
 
 .kanban-column::-webkit-scrollbar {
@@ -26,56 +34,144 @@
 }
 
 .kanban-column::-webkit-scrollbar-thumb {
-  background: #444;
+  background: #9333ea; /* Púrpura neón */
   border-radius: 4px;
 }
 
 .kanban-card {
   margin-bottom: 20px;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(102, 102, 102, 0.25);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  color: #212121; /* Texto oscuro dentro de la tarjeta */
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5); /* Borde neón */
+  background: rgba(31, 41, 55, 0.95); /* Fondo oscuro */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .kanban-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(74, 74, 74, 0.35);
+  transform: translateY(-6px);
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.7); /* Neón más intenso */
+}
+
+.kanban-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+.kanban-card:hover::before {
+  left: 100%; /* Efecto de brillo "glitch" al pasar el mouse */
 }
 
 .task-title {
   margin: 0;
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #ffffff; /* Título blanco */
-  padding: 12px 16px 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #e9d5ff; /* Púrpura claro */
+  padding: 14px 16px 0;
+  letter-spacing: 0.5px;
 }
 
 .task-content {
-  padding: 0 8px 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea tenue */
+  padding: 0 10px 6px;
+  border-bottom: 1px solid rgba(147, 51, 234, 0.3); /* Línea púrpura tenue */
 }
 
 .task-description {
-  font-size: 0.95em;
-  color: #ffffff; /* Descripción blanca */
-  margin: 8px 0;
-  line-height: 1.4;
+  font-size: 1em;
+  color: #d8b4fe; /* Púrpura más claro */
+  margin: 10px 0;
+  line-height: 1.5;
 }
 
 .task-deadline {
-  font-size: 0.85em;
-  color: #b1afaf; /* Fecha en gris claro */
+  font-size: 0.9em;
+  color: #a78bfa; /* Púrpura suave */
 }
 
-
-
 .status-label {
-  font-weight: bold;
-  font-size: 0.85em;
-  padding: 6px 12px;
-  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 8px 14px;
+  border-radius: 4px; /* Bordes angulares */
   display: inline-block;
-  background-color: rgba(255, 255, 255, 0.452); /* Fondo semitransparente */
+  background: rgba(17, 24, 39, 0.9); /* Fondo oscuro */
+  color: #e9d5ff;
+  border: 1px solid #9333ea; /* Borde neón */
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.4);
+}
+
+/* Estilos para los botones */
+:host ::ng-deep .p-button {
+  border-radius: 4px; /* Bordes angulares */
+  padding: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+:host ::ng-deep .p-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+:host ::ng-deep .p-button:hover::before {
+  left: 100%; /* Efecto de brillo "glitch" */
+}
+
+:host ::ng-deep .p-button[icon="pi pi-plus"] {
+  background: #9333ea; /* Púrpura para el botón de crear */
+}
+
+:host ::ng-deep .p-button[icon="pi pi-plus"]:hover {
+  background: #a78bfa; /* Púrpura más claro */
+  transform: translateY(-2px);
+}
+
+:host ::ng-deep .p-button[severity="secondary"] {
+  background: #9333ea; /* Púrpura para el botón de editar */
+}
+
+:host ::ng-deep .p-button[severity="secondary"]:hover {
+  background: #a78bfa; /* Púrpura más claro */
+  transform: translateY(-2px);
+}
+
+:host ::ng-deep .p-button[severity="danger"] {
+  background: #dc2626; /* Rojo para el botón de eliminar */
+}
+
+:host ::ng-deep .p-button[severity="danger"]:hover {
+  background: #b91c1c; /* Rojo más oscuro */
+  transform: translateY(-2px);
+}
+
+/* Estilo para el botón de crear tarea */
+:host ::ng-deep .task-create-button .p-button {
+  margin: 20px;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+}
+
+/* Estilo para el panel */
+:host ::ng-deep .p-panel .p-panel-header {
+  background: linear-gradient(45deg, #9333ea, #4f46e5); /* Gradiente púrpura-azul */
+  color: #e9d5ff;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  padding: 12px 16px;
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.4);
 }
